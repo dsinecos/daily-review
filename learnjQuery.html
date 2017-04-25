@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily Review</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <div class="btn-group">
+        <button class="btn" id="displayCategory"> Display </button>
+        <button class="btn" id="addCategory"> Add </button>
+        <button class="btn" id="editCategory"> Create </button>
+        <button class="btn" id="deleteCategory"> Delete </button>
+    </div>
+
+    <div id="displayCategoryContent" class="defaultView" data-loaded="false">
+        <p>This is for Display</p>
+        <!--
+        <button class="btn btn-primary">Category 1<span><button class="btn btn-primary"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button></span><span><button class="btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></span></button>
+        -->
+
+    </div>
+
+    <div id="addCategoryContent" class="defaultView">
+        <p>This is for Add</p>
+    </div>
+
+    <div id="editCategoryContent" class="defaultView">
+        <p>This is for Create</p>
+    </div>
+
+    <div id="deleteCategoryContent" class="defaultView">
+        <p>This is for Delete</p>
+    </div>
+
+</body>
+
+<style>
+    .defaultView {
+        height: 200px;
+        width: 60%;
+        border-style: groove;
+        border-width: 4px;
+    }
+    
+    .categoryButton {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-right: 5px;
+        margin-left: 5px;
+        display: inline-block;
+    }
+</style>
+
+<script>
+    function loadCategory() {
+        console.log();
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                processResponse(JSON.parse(this.responseText));
+                //console.log(JSON.parse(this.responseText)[2].name);
+            }
+        }
+
+        xhttp.open("GET", "http://localhost:2346/category", true);
+        xhttp.send();
+    }
+
+    function processResponse(categoryJSON) {
+        //console.log(categoryJSON);
+        render(categoryJSON);
+    }
+
+    function render(categoryJSON) {
+        for (i = 0; i < categoryJSON.length; i++) {
+            console.log("Category Name " + categoryJSON[i].name);
+            console.log("Category Label " + categoryJSON[i].label);
+
+           
+            $("#displayCategoryContent").append('<div class="categoryButton" value="' + categoryJSON[i].name + '"><button class="btn btn-primary" data-categoryaction="display" data-category="' + categoryJSON[i].name + '" value="' + categoryJSON[i].name + '">' + categoryJSON[i].name + '<span><button class="btn btn-primary" data-categoryaction="edit" data-category="' + categoryJSON[i].name + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button></span><span><button class="btn btn-primary" data-categoryaction="delete" data-category="' + categoryJSON[i].name + '"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></span></button></div>');
+            
+
+            if (i === categoryJSON.length - 1) {
+                $("#displayCategoryContent").data("loaded", "true");
+            }
+        }
+    }
+
+    $(document).ready(function () {
+
+        $("#displayCategory").on("click", function () {
+
+            var loaded = $("#displayCategoryContent").data("loaded");
+            console.log("Has category data been loaded? :" + $("#displayCategoryContent").data("loaded"));
+            console.log("Value of loaded :" + (loaded == false));
+
+            if (loaded == 'false') {
+                console.log("Inside if function");
+                loadCategory();
+                $(".defaultView").hide();
+                $("#displayCategoryContent").slideDown("slow");
+            }
+
+
+        });
+
+        $("#addCategory").on("click", function () {
+            $(".defaultView").hide();
+            $("#displayCategoryContent").data("loaded", "false");
+            $("#addCategoryContent").slideDown("slow");
+        });
+
+        $("#editCategory").on("click", function () {
+            $(".defaultView").hide();
+            $("#displayCategoryContent").data("loaded", "false");
+            $("#editCategoryContent").slideDown("slow");
+        });
+
+        $("#deleteCategory").on("click", function () {
+            $(".defaultView").hide();
+            $("#displayCategoryContent").data("loaded", "false");
+            $("#deleteCategoryContent").slideDown("slow");
+        });
+    });
+
+    $("#displayCategoryContent").on("click", "button", function () {
+        console.log("Button clicked");
+        //console.log("Using text " + $(this).text());
+        //console.log("Using value " + $(this).val());
+        //var jqueryObject = $(this).parent();
+        //console.log("Regarding parent " + $(jqueryObject).val());
+        //console.log("Regarding parent " + $(jqueryObject).parent().text());
+        console.log("Regarding data :" + $(this).data("category"));
+        console.log("Regarding action :" + $(this).data("categoryaction"));
+
+    });
+
+</script>
