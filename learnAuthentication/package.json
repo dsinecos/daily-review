@@ -1,0 +1,22 @@
+{
+  "name": "learnauthentication",
+  "version": "1.0.0",
+  "description": "Implementing authentication using username and password",
+  "main": "learnAuthentication.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "-"
+  },
+  "keywords": [
+    "-"
+  ],
+  "author": "dsinecos",
+  "license": "ISC",
+  "dependencies": {
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
+  }
+}
