@@ -13,17 +13,28 @@ app.get('/', function(req, res){
 app.listen(2346);
 */
 
+var pg = require('pg');
 var express = require('express');
 var session = require('express-session');
+var PostgreSqlStore = require('connect-pg-simple')(session);
 
 var app = express();
 
 var count = 1;
 
-app.use(session({
-    secret: "Shh, its a secret!", resave: false,
-    saveUninitialized: true, name: "Ghanta"
-}));
+var sessionOptions = {
+    secret: "Ghanta secret",
+    resave: false,
+    saveUninitialized: true,
+    name: "Ghanta Cookie ka Naam hai",
+    store: new PostgreSqlStore({
+        conString: "pg://postgres:postgres@localhost:5432/testsession",
+        pruneSessionInterval: false
+    })
+};
+
+app.use(session(sessionOptions));
+
 
 app.get('/', function (req, res) {
 
@@ -36,6 +47,7 @@ app.get('/', function (req, res) {
     }
 
     console.log("The name of this session is :" + req.session.sessionName);
+    //console.log("What does session store contain? " + req.session.session.Store);
 
     if (req.session.page_views) {
         req.session.page_views++;
@@ -49,6 +61,43 @@ app.get('/', function (req, res) {
 });
 
 app.listen(2346);
+
+/*
+var express = require('express');
+var session = require('express-session');
+var PostgreSqlStore = require('connect-pg-simple')(session);
+
+var app = express();
+
+var sessionOptions = {
+    secret: "secret",
+    resave: true,
+    saveUninitialized: false,
+    store: new PostgreSqlStore({
+        
+        conString: "postgres://postgres:postgres@localhost:5432/testsession"
+    })
+};
+
+app.use(session(sessionOptions));
+
+app.get("/", function (req, res) {
+    if (!req.session.views) {
+        req.session.views = 1;
+    } else {
+        req.session.views += 1;
+    }
+
+    res.json({
+        "status": "ok",
+        "frequency": req.session.views
+    });
+});
+
+app.listen(2346, function () {
+    console.log("Server started at: http://localhost:3300");
+});
+*/
 
 /*
 var express = require('express')
