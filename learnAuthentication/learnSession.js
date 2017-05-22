@@ -16,7 +16,11 @@ app.listen(2346);
 var pg = require('pg');
 var express = require('express');
 var session = require('express-session');
-var PostgreSqlStore = require('connect-pg-simple')(session);
+var intermediate = require('connect-pg-simple')(session);
+var PostgreSqlStore = new intermediate({
+    conString: "pg://postgres:postgres@localhost:5432/testsession",
+    pruneSessionInterval: false
+});
 
 var app = express();
 
@@ -27,37 +31,46 @@ var sessionOptions = {
     resave: false,
     saveUninitialized: true,
     name: "Ghanta Cookie ka Naam hai",
-    store: new PostgreSqlStore({
-        conString: "pg://postgres:postgres@localhost:5432/testsession",
-        pruneSessionInterval: false
-    })
+    store: PostgreSqlStore
 };
 
 app.use(session(sessionOptions));
 
+//console.log("This is the postgres-store object - " + JSON.stringify(sessionOptions.store.__proto__, null, "  "));
 
 app.get('/', function (req, res) {
 
     //req.session.sessionName = count;
 
-    if(req.session.sessionName) {
+    if (req.session.sessionName) {
+        console.log("\n");
+        console.log("Existing page views equals to " + req.session.page_views);
     } else {
         req.session.sessionName = "Name" + count;
+
         count++;
     }
 
     console.log("The name of this session is :" + req.session.sessionName);
-    //console.log("What does session store contain? " + req.session.session.Store);
+    
 
     if (req.session.page_views) {
         req.session.page_views++;
         res.send("You visited this page " + req.session.page_views + " times");
-        console.log(req.session.id);
-        console.log(req.session.cookie);
+        console.log("Session ID " + req.sessionID);
+        console.log("Session Cookie " + JSON.stringify(req.session.cookie, null, " "));
     } else {
         req.session.page_views = 1;
         res.send("Welcome to this page for the first time!");
     }
+
+    // Using express-session store functions
+    PostgreSqlStore.get(req.sessionID, function(err, data) {
+        console.log("-------------------------------");
+        console.log("This is being printed out of express-session store implementation methods");
+        console.log(data);
+    });
+
 });
 
 app.listen(2346);
