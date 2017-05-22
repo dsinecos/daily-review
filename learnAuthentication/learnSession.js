@@ -1,3 +1,4 @@
+/*
 var cookieParser = require('cookie-parser');
 
 var express = require('express');
@@ -10,29 +11,44 @@ app.get('/', function(req, res){
 });
 
 app.listen(2346);
+*/
 
-/*
 var express = require('express');
-var cookieParser = require('cookie-parser');
 var session = require('express-session');
 
 var app = express();
 
-app.use(cookieParser());
-app.use(session({secret: "Shh, its a secret!", resave: false,
-    saveUninitialized: true}));
+var count = 1;
 
-app.get('/', function(req, res){
-   if(req.session.page_views){
-      req.session.page_views++;
-      res.send("You visited this page " + req.session.page_views + " times");
-   }else{
-      req.session.page_views = 1;
-      res.send("Welcome to this page for the first time!");
-   }
+app.use(session({
+    secret: "Shh, its a secret!", resave: false,
+    saveUninitialized: true, name: "Ghanta"
+}));
+
+app.get('/', function (req, res) {
+
+    //req.session.sessionName = count;
+
+    if(req.session.sessionName) {
+    } else {
+        req.session.sessionName = "Name" + count;
+        count++;
+    }
+
+    console.log("The name of this session is :" + req.session.sessionName);
+
+    if (req.session.page_views) {
+        req.session.page_views++;
+        res.send("You visited this page " + req.session.page_views + " times");
+        console.log(req.session.id);
+        console.log(req.session.cookie);
+    } else {
+        req.session.page_views = 1;
+        res.send("Welcome to this page for the first time!");
+    }
 });
+
 app.listen(2346);
-*/
 
 /*
 var express = require('express')
