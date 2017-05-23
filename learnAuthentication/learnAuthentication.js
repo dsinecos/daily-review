@@ -1,7 +1,9 @@
 var express = require("express");
+var bodyparser = require('body-parser');
 var session = require('express-session');
 var passport = require("passport");
 var Strategy = require("passport-local").Strategy;
+
 var intermediate = require('connect-pg-simple')(session);
 var PostgreSqlStore = new intermediate({
     conString: "pg://postgres:postgres@localhost:5432/testsession",
@@ -25,7 +27,7 @@ var sessionOptions = {
     resave: false,
     saveUninitialized: true,
     name: "cookieDaNaam",
-    //store: PostgreSqlStore
+    store: PostgreSqlStore
 };
 
 app.use(session(sessionOptions));
@@ -93,21 +95,59 @@ app.post('/',
     passport.authenticate('local', { failureRedirect: '/failed' }),
     function (req, res) {
         console.log("Inside successful login");
-        res.send("Successfully logged in Hoyeeeee ");
+        //res.send("Successfully logged in Hoyeeeee ");
+        res.redirect('/successLogin');
 
         console.log("req.session.passport.user " + req.session.passport.user);
         console.log("req.user " + JSON.stringify(req.user, null, " "));
     });
 
-app.get('/failed', function(req, res) {
+app.get('/failed', function (req, res) {
     res.send("Fail ho gaya re babua");
 })
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.write("This is to test cookie hacking");
-    res.write("This is the name of the user " + JSON.stringify(req.user, null, "  "));
+    res.write("This is the name of the currently logged in user " + JSON.stringify(req.user, null, "  "));
     res.end();
 
     console.log("This is to test cookie hacking");
     console.log("The username is " + JSON.stringify(req.user, null, "  "));
 })
+
+app.get('/successLogin', checkAuthentication, function (req, res) {
+    res.write("Oh Yeaaah, you've successfully logged in");
+    res.end();
+
+    console.log("\n");
+    console.log("Logged in successfully");
+});
+
+function checkAuthentication(req, res, next) {
+    if (req.isAuthenticated()) {
+        //res.write(JSON.stringify(req.user, null, "  "));
+        //res.end();
+        next();
+    } else {
+        res.send("You Jackass !!!! You gotta login first nigga");
+        //res.send(JSON.stringify(req.user, null, "  "));
+        res.end();
+        console.log("Dumbass was trying to get in without logging in");
+    }
+
+}
+
+app.post('/addCategory', checkAuthentication, function(req, res) {
+    //Name of the fields is categoryName and categoryLabel
+    res.write(req.body.categoryName);
+    res.write(req.body.categoryLabel);
+    res.write("We got this nigga");
+    res.write(" " + JSON.stringify(req.user, null, " "));
+    res.end();
+});
+
+app.get('/getCategory', checkAuthentication, function(req, res) {
+    // Get all categories from the database corresponding to the user id
+    res.write("We'll get categories for the following user " + JSON.stringify(req.user, null, " "));
+    res.end();
+});
