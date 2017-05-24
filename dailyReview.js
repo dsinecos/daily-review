@@ -21,12 +21,20 @@ var PostgreSqlStore = new connectPgSimple({
     pruneSessionInterval: false
 });
 
+/*
 // For authentication related database operations 
 var connectionString = "pg://admin:guest@localhost:5432/authentication";
 var authenticationClient = new pg.Client(connectionString);
 authenticationClient.connect();
 //authenticationClient.query("DROP TABLE IF EXISTS authentication");
 authenticationClient.query("CREATE TABLE IF NOT EXISTS authentication(id SERIAL PRIMARY KEY, username varchar(64), password varchar(64))");
+*/
+
+// For shifting authentication to the dailyreview_users table
+var connectionString = "pg://admin:guest@localhost:5432/dailyreview";
+var authenticationClient = new pg.Client(connectionString);
+authenticationClient.connect();
+
 
 // For promise based database operations for the app
 var connectionString = "pg://admin:guest@localhost:5432/dailyreview";
@@ -57,8 +65,9 @@ app.use(passport.session());
 passport.use(new Strategy(
     function (username, password, cb) {
         //console.log("Inside local strategy");
-        //console.log("Value of Variables username " + username);
-        //console.log("Value of Variables username " + password);
+        //console.log("Value of Variable username " + username);
+        //console.log("Value of Variable password " + password);
+        
         findByUsername(username, function (err, user) {
             if (err) { return cb(err); }
             if (!user) { return cb(null, false); }
@@ -66,20 +75,23 @@ passport.use(new Strategy(
             //console.log("-----------------------------------------");
             //console.log("Inside findByUserName");
             //console.log("Value of variable username " + username);
+            //console.log(" " + JSON.stringify(user, null, "  "));
             return cb(null, user);
         });
     }));
 
 function findByUsername(username, fn) {
-    authenticationClient.query("SELECT * FROM authentication WHERE username=$1", [username], returnedUsername);
+    authenticationClient.query("SELECT * FROM dailyreview_users WHERE user_name=$1", [username], returnedUsername);
     //console.log("Inside findbyusername");
     function returnedUsername(err, result) {
+        //console.log("Inside returnedUsername");
+        //console.log("The result from the database is " + JSON.stringify(result.rows[0], null, "  "));
         fn(err, result.rows[0]);
     }
 }
 
 function findByID(id, fn) {
-    authenticationClient.query("SELECT * FROM authentication WHERE id=$1", [id], returnedID);
+    authenticationClient.query("SELECT * FROM dailyreview_users WHERE user_id=$1", [id], returnedID);
     //console.log("Inside database findbyid");
 
     function returnedID(err, result) {
@@ -92,8 +104,8 @@ function findByID(id, fn) {
 passport.serializeUser(function (user, cb) {
     //console.log("-----------------------------------------");
     //console.log("Inside serializeUser");
-    //console.log("Variables user.id " + user.id);
-    cb(null, user.id);
+    //console.log("Variables user.id " + user.user_id);
+    cb(null, user.user_id);
 });
 
 passport.deserializeUser(function (id, cb) {
