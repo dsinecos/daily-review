@@ -23,16 +23,7 @@ var PostgreSqlStore = new connectPgSimple({
     pruneSessionInterval: false,
 });
 
-/*
 // For authentication related database operations 
-var connectionString = "pg://admin:guest@localhost:5432/authentication";
-var authenticationClient = new pg.Client(connectionString);
-authenticationClient.connect();
-//authenticationClient.query("DROP TABLE IF EXISTS authentication");
-authenticationClient.query("CREATE TABLE IF NOT EXISTS authentication(id SERIAL PRIMARY KEY, username varchar(64), password varchar(64))");
-*/
-
-// For shifting authentication to the dailyreview_users table
 var connectionString = "pg://admin:guest@localhost:5432/dailyreview";
 var authenticationClient = new pg.Client(connectionString);
 authenticationClient.connect();
@@ -160,7 +151,9 @@ app.get('/failed', function (req, res) {
 // For Testing successful login
 app.get('/successLogin', checkAuthentication, function (req, res) {
     res.write("Logged in successfully \n");
-    res.write("This is the name of the currently logged in user " + JSON.stringify(req.user, null, "  "));
+    var userData = JSON.stringify(req.user, null, "  ");
+    //res.write("This is the name of the currently logged in user " + userData);
+    res.write(userData);
     res.end();
 });
 
@@ -170,6 +163,18 @@ app.get('/', checkAuthentication, function (req, res) {
     res.write("For Testing successive requests from a logged in user \n");
     res.write("This is the name of the currently logged in user " + JSON.stringify(req.user, null, "  "));
     res.end();
+});
+
+// Router for signup
+app.post('/signup', function(req, res) {
+    var sqlQuery = `INSERT
+                    INTO dailyreview_users (user_name, password)
+                    VALUES ($1, $2)`;
+    
+    dailyReviewClient.query(sqlQuery, [req.body.username, req.body.password]).then(function(data) {
+        res.write("Account created successfully");
+        res.end();
+    });
 });
 
 // App Routers
