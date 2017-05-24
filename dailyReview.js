@@ -17,8 +17,10 @@ var pgp = require('pg-promise')();
 // For storing express-session data 
 var connectPgSimple = require('connect-pg-simple')(session);
 var PostgreSqlStore = new connectPgSimple({
-    conString: "pg://postgres:postgres@localhost:5432/testsession",
-    pruneSessionInterval: false
+    //conString: "pg://postgres:postgres@localhost:5432/testsession",
+    conString: "pg://admin:guest@localhost:5432/dailyreview",
+    tableName: "dailyreview_session",
+    pruneSessionInterval: false,
 });
 
 /*
