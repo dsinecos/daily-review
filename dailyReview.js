@@ -56,16 +56,16 @@ app.use(passport.session());
 
 passport.use(new Strategy(
     function (username, password, cb) {
-        console.log("Inside local strategy");
-        console.log("Value of Variables username " + username);
-        console.log("Value of Variables username " + password);
+        //console.log("Inside local strategy");
+        //console.log("Value of Variables username " + username);
+        //console.log("Value of Variables username " + password);
         findByUsername(username, function (err, user) {
             if (err) { return cb(err); }
             if (!user) { return cb(null, false); }
             if (user.password != password) { return cb(null, false); }
-            console.log("-----------------------------------------");
-            console.log("Inside findByUserName");
-            console.log("Value of variable username " + username);
+            //console.log("-----------------------------------------");
+            //console.log("Inside findByUserName");
+            //console.log("Value of variable username " + username);
             return cb(null, user);
         });
     }));
@@ -80,27 +80,27 @@ function findByUsername(username, fn) {
 
 function findByID(id, fn) {
     authenticationClient.query("SELECT * FROM authentication WHERE id=$1", [id], returnedID);
-    console.log("Inside database findbyid");
+    //console.log("Inside database findbyid");
 
     function returnedID(err, result) {
-        console.log("Inside function returnedID");
-        console.log("result.rows[0] " + JSON.stringify(result.rows[0], null, "  "));
+        //console.log("Inside function returnedID");
+        //console.log("result.rows[0] " + JSON.stringify(result.rows[0], null, "  "));
         fn(err, result.rows[0]);
     }
 }
 
 passport.serializeUser(function (user, cb) {
-    console.log("-----------------------------------------");
-    console.log("Inside serializeUser");
-    console.log("Variables user.id " + user.id);
+    //console.log("-----------------------------------------");
+    //console.log("Inside serializeUser");
+    //console.log("Variables user.id " + user.id);
     cb(null, user.id);
 });
 
 passport.deserializeUser(function (id, cb) {
-    console.log("\n");
-    console.log("Inside deserializeUser");
-    console.log("What is the ID " + id);
-    console.log("\n");
+    //console.log("\n");
+    //console.log("Inside deserializeUser");
+    //console.log("What is the ID " + id);
+    //console.log("\n");
     findByID(id, function (err, user) {
         if (err) { return cb(err); }
         cb(null, user);
@@ -127,36 +127,30 @@ function checkAuthentication(req, res, next) {
 app.post('/',
     passport.authenticate('local', { failureRedirect: '/failed' }),
     function (req, res) {
-        console.log("Inside successful login");
         //res.send("Successfully logged in Hoyeeeee ");
         res.redirect('/successLogin');
-
-        console.log("req.session.passport.user " + req.session.passport.user);
-        console.log("req.user " + JSON.stringify(req.user, null, " "));
     });
 
-// Router for failed login attempt
+// Routers for Authentication Testing using Postman
+// For Testing Failed Authentication
 app.get('/failed', function (req, res) {
-    res.send("Fail ho gaya re babua");
+    res.send("Login Failed, Try again");
 })
 
 // Router for successive requests to test if the user is logged in and send him his user details
+// For Testing successive requests from a logged in user
 app.get('/', function (req, res) {
-    res.write("This is to test cookie hacking");
+    res.write("For Testing successive requests from a logged in user \n");
     res.write("This is the name of the currently logged in user " + JSON.stringify(req.user, null, "  "));
     res.end();
-
-    console.log("This is to test cookie hacking");
-    console.log("The username is " + JSON.stringify(req.user, null, "  "));
-})
+});
 
 // Router for successful login
+// For Testing successful login
 app.get('/successLogin', checkAuthentication, function (req, res) {
-    res.write("Oh Yeaaah, you've successfully logged in");
+    res.write("Logged in successfully \n");
+    res.write("This is the name of the currently logged in user " + JSON.stringify(req.user, null, "  "));
     res.end();
-
-    console.log("\n");
-    console.log("Logged in successfully");
 });
 
 // App Routers
