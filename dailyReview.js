@@ -168,12 +168,12 @@ app.get('/', checkAuthentication, function (req, res) {
 });
 
 // Router for signup
-app.post('/signup', function(req, res) {
+app.post('/signup', function (req, res) {
     var sqlQuery = `INSERT
                     INTO dailyreview_users (user_name, password)
                     VALUES ($1, $2)`;
-    
-    dailyReviewClient.query(sqlQuery, [req.body.username, req.body.password]).then(function(data) {
+
+    dailyReviewClient.query(sqlQuery, [req.body.username, req.body.password]).then(function (data) {
         res.write("Account created successfully");
         res.end();
     });
@@ -197,7 +197,7 @@ app.post('/addCategory', checkAuthentication, function (req, res) {
 
     //console.log("The current logged in user's id is " + req.user.user_id);
 
-    req.checkBody('categoryName','Category name cannot be empty').notEmpty();
+    req.checkBody('categoryName', 'Category name cannot be empty').notEmpty();
 
     req.getValidationResult().then(function (result) {
         if (!result.isEmpty()) {
@@ -231,12 +231,12 @@ app.get('/getCategory', checkAuthentication, function (req, res) {
         console.log("The typeof data is array? " + (data.constructor === Array));
         console.log("The length of the array is " + data.length);
         */
-        if(data.length === 0) {
+        if (data.length === 0) {
             res.send("There are no categories to display at this point");
         } else {
             res.send(JSON.stringify(data, null, "  "));
         }
-        
+
     }).catch(function (error) {
         res.status(500).send("Internal server error ");
         console.log("Error retrieving categories from the database");
@@ -248,15 +248,18 @@ app.get('/getCategory', checkAuthentication, function (req, res) {
 app.post('/editCategory', checkAuthentication, function (req, res) {
     //Name of fields is categoryNameOld, categoryNameNew, categoryLabelNew
     var sqlQuery = `UPDATE dailyreview_category
-                    SET category_name=$1, category_label=$2 WHERE category_name=$3 AND user_id=$4`;
+                    SET category_name=$1, category_label=$2
+                    WHERE category_name=$3 AND user_id=$4`;
 
-    dailyReviewClient.query(sqlQuery, [req.body.categoryNameNew, req.body.categoryLabelNew, req.body.categoryNameOld, req.user.user_id]).then(function (data) {
+    dailyReviewClient.query(sqlQuery, [req.body.categoryNameNew, req.body.categoryLabelNew, req.body.categoryNameOld, req.user.user_id, req.body.categoryNameOld]).then(function (data) {
         res.write(JSON.stringify(data, null, "  "));
         res.write("Category updated successfully");
         res.end();
     }).catch(function (err) {
-        res.send("Category not updated. Error !");
+        res.status(500).send("Internal server error");
         res.end();
+        console.log("Category not updated. Error ");
+        console.log(err);
     });
 
 });
@@ -265,16 +268,32 @@ app.post('/editCategory', checkAuthentication, function (req, res) {
 app.post('/deleteCategory', checkAuthentication, function (req, res) {
     // Name of fields is categoryName
     var sqlQuery = `DELETE
+                    FROM dailyreview_score
+                    WHERE category_id=(SELECT category_id FROM dailyreview_category WHERE category_name=$1)
+                    AND userdate_id=(SELECT userdate_id FROM dailyreview_userdate WHERE user_id=$2)`;
+
+    dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
+        console.log("Scores corresponding to the category deleted from the table dailyreview_score");
+
+        var sqlQuery = `DELETE
                     FROM dailyreview_category
                     WHERE category_name=$1 AND user_id=$2`;
 
-    dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
-        res.send("Category deleted successfully");
-        res.end();
+        dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
+            res.send("Category deleted successfully");
+            res.end();
+        }).catch(function (err) {
+            res.send("Category not deleted. Error !");
+            res.end();
+            console.log("Category not deleted from dailyreview_category table. Following is the error");
+            console.log(err);
+        });
+
     }).catch(function (err) {
-        res.send("Category not deleted. Error !");
-        res.end();
-    });;
+        console.log("Scores not deleted from dailyreview_score table. Following is the error");
+        console.log(err);
+    });
+
 });
 
 // Router for reviewing a date by the chosen categories
