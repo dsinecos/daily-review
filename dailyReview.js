@@ -4,6 +4,7 @@
 var express = require("express");
 var bodyparser = require('body-parser');
 var session = require('express-session');
+var expressValidator = require('express-validator');
 
 // For authentication
 var passport = require("passport");
@@ -40,6 +41,7 @@ app.listen(2346);
 // Middleware 
 // For parsing the body of the request
 app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(expressValidator());
 
 // For setting up user sessions
 var sessionOptions = {
@@ -187,17 +189,30 @@ app.post('/addCategory', checkAuthentication, function (req, res) {
     //res.write(" " + JSON.stringify(req.user, null, " "));
     //res.end();
 
+
+
     var sqlQuery = `INSERT 
                     INTO dailyreview_category (user_id, category_name, category_label)
                     VALUES ($1, $2, $3)`;
 
     //console.log("The current logged in user's id is " + req.user.user_id);
 
+    req.checkBody('categoryName','Category name cannot be empty').notEmpty();
+
+    req.getValidationResult().then(function (result) {
+        if (!result.isEmpty()) {
+            res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+            return;
+        }
+    });
+
     dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.categoryName, req.body.categoryLabel]).then(function (data) {
         //console.log("Successfully data chala gaya database mein, hoyee");
         res.send("Category added successfully");
     }).catch(function (error) {
-        res.send("Category not added. Error !")
+        res.status(500).send("Internal server error");
+        console.log("Category not added to database. Following error occured");
+        console.log(error);
     });
 });
 
