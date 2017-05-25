@@ -41,7 +41,36 @@ app.listen(2346);
 // Middleware 
 // For parsing the body of the request
 app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(expressValidator());
+app.use(expressValidator({
+    customValidators: {
+        categoryDataValidationForReview: function (categoryName, categoryScore) {
+            var validationResult;
+            //console.log("  " + categoryName);
+            //console.log("  " + categoryScore);
+            //console.log("Number of arguments " + JSON.stringify(arguments, null, "  "));
+            if (categoryName && categoryScore) {
+                //console.log("Inside if");
+                validationResult = (categoryName.length === categoryScore.length) && categoryName.length > 0 && categoryScore.length > 0;
+                //console.log(validationResult);
+                for (var i = 0; i < categoryScore.length; i++) {
+                    //console.log("inside for");
+                    if (categoryScore[i] > 0 && categoryScore[i] < 5) {
+
+                    } else {
+                        //console.log("Inside for else" + categoryScore[i] + categoryName[i]);
+                        validationResult = false;
+                    }
+                }
+                return validationResult;
+            } else {
+                //console.log("inside else");
+                validationResult = false;
+                return validationResult;
+            }
+
+        }
+    }
+}));
 
 // For setting up user sessions
 var sessionOptions = {
@@ -201,7 +230,7 @@ app.post('/addCategory', checkAuthentication, function (req, res) {
 
     req.getValidationResult().then(function (result) {
         if (!result.isEmpty()) {
-            res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+            res.status(400).send('There have been validation errors: ' + JSON.stringify(result.array(), null, "  "));
             return;
         }
     });
@@ -335,11 +364,6 @@ app.post('/deleteCategory', checkAuthentication, function (req, res) {
         console.log("Error occurred ");
         console.log(err);
     });
-
-
-    //
-
-
 });
 
 // Router for reviewing a date by the chosen categories
@@ -354,7 +378,58 @@ app.post('/reviewDay', checkAuthentication, function (req, res) {
     //console.log(req.user.user_id)
     //console.log(req.body.date);
 
+    //req.checkBody('date','Invalid Date')
+    //req.checkBody('categoryName',)
 
+    req.checkBody('categoryName', "Category data provided for review is not valid").categoryDataValidationForReview(req.body.categoryScore);
+    //console.log("Printing from req.body.categoryName " + req.body.categoryName);
+    //console.log("Printing from req.body.categoryScore" + req.body.categoryScore);
+
+    req.getValidationResult().then(function (result) {
+        if (!result.isEmpty()) {
+            res.status(400).send('There have been validation errors: ' + JSON.stringify(result.array(), null, "  "));
+            res.end();
+            //console.log("Before return");
+            return;
+        } else {
+            var sqlQuery = `INSERT 
+                    INTO dailyreview_userdate (user_id, dateentry)
+                    VALUES ($1, $2)`;
+
+            dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.date]).then(function () {
+
+                var sqlQuery = `SELECT userdate_id
+                        FROM dailyreview_userdate
+                        WHERE user_id=$1 AND dateentry=$2`;
+
+                dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.date]).then(function (dataForID) {
+                    //console.log(dataForID[0]["userdate_id"]);
+                    //console.log("reformed userdateid " + userdate_id.userdate_id);
+                    for (var i = 0; i < req.body.categoryName.length; i++) {
+                        let count = i;
+                        var sqlQuery = `SELECT category_id
+                                FROM dailyreview_category
+                                WHERE category_name=$1`;
+
+                        dailyReviewClient.query(sqlQuery, [req.body.categoryName[count]]).then(function (category_id) {
+                            //console.log("Value of count " + count);
+                            //console.log("req.body.categoryScore " + req.body.categoryScore[count]);
+
+                            var sqlQuery = `INSERT
+                                    INTO dailyreview_score (userdate_id, category_id, score)
+                                    VALUES ($1, $2, $3)`;
+
+                            dailyReviewClient.query(sqlQuery, [dataForID[0]["userdate_id"], category_id[0]["category_id"], req.body.categoryScore[count]]);
+                        });
+                    }
+
+                });
+
+                res.send("Date reviewed successfully");
+                res.end();
+            });
+        }
+    });
 
     // How to enter all this data into the respective table in the database
     // Insert user_id and date into userdate table
@@ -363,42 +438,7 @@ app.post('/reviewDay', checkAuthentication, function (req, res) {
     // Merge the two arrays of category names and scores - How?
     // Insert userdate_id, category_id and score into score table
 
-    var sqlQuery = `INSERT 
-                    INTO dailyreview_userdate (user_id, dateentry)
-                    VALUES ($1, $2)`;
 
-    dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.date]).then(function () {
-
-        var sqlQuery = `SELECT userdate_id
-                        FROM dailyreview_userdate
-                        WHERE user_id=$1 AND dateentry=$2`;
-
-        dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.date]).then(function (dataForID) {
-            console.log(dataForID[0]["userdate_id"]);
-            //console.log("reformed userdateid " + userdate_id.userdate_id);
-            for (var i = 0; i < req.body.categoryName.length; i++) {
-                let count = i;
-                var sqlQuery = `SELECT category_id
-                                FROM dailyreview_category
-                                WHERE category_name=$1`;
-
-                dailyReviewClient.query(sqlQuery, [req.body.categoryName[count]]).then(function (category_id) {
-                    console.log("Value of count " + count);
-                    console.log("req.body.categoryScore " + req.body.categoryScore[count]);
-
-                    var sqlQuery = `INSERT
-                                    INTO dailyreview_score (userdate_id, category_id, score)
-                                    VALUES ($1, $2, $3)`;
-
-                    dailyReviewClient.query(sqlQuery, [dataForID[0]["userdate_id"], category_id[0]["category_id"], req.body.categoryScore[count]]);
-                });
-            }
-
-        });
-
-        res.send("Date reviewed successfully");
-        res.end();
-    });
 });
 
 // Router for getting the review for a date
