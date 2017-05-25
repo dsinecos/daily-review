@@ -419,14 +419,35 @@ app.post('/reviewDay', checkAuthentication, function (req, res) {
                                     INTO dailyreview_score (userdate_id, category_id, score)
                                     VALUES ($1, $2, $3)`;
 
-                            dailyReviewClient.query(sqlQuery, [dataForID[0]["userdate_id"], category_id[0]["category_id"], req.body.categoryScore[count]]);
+                            dailyReviewClient.query(sqlQuery, [dataForID[0]["userdate_id"], category_id[0]["category_id"], req.body.categoryScore[count]]).then(function (data) {
+                                res.send("Date reviewed successfully");
+                                res.end();
+                                return;
+                            }).catch(function (err) {
+                                res.status(500).send("Internal server error");
+                                res.end();
+                                console.log("Error inserting data into dailyreview_score. Following is the error")
+                                console.log(err);
+                            });
+                        }).catch(function (err) {
+                            res.status(500).send("Internal server error");
+                            res.end();
+                            console.log("Error selecting data from dailyreview_category. Following is the error")
+                            console.log(err);
                         });
                     }
 
+                }).catch(function (err) {
+                    res.status(500).send("Internal server error");
+                    res.end();
+                    console.log("Error while selecting data from userdate table. Following is the error");
+                    console.log(err);
                 });
-
-                res.send("Date reviewed successfully");
+            }).catch(function (err) {
+                res.status(500).send("Internal server error");
                 res.end();
+                console.log("Error occurred while inserting row in dailyreview_userdate. Following is the error")
+                console.log(err);
             });
         }
     });
