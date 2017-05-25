@@ -247,18 +247,39 @@ app.get('/getCategory', checkAuthentication, function (req, res) {
 // Router for editing existing categories
 app.post('/editCategory', checkAuthentication, function (req, res) {
     //Name of fields is categoryNameOld, categoryNameNew, categoryLabelNew
-    var sqlQuery = `UPDATE dailyreview_category
+
+    // To check if a category by the name categoryNameOld exists in the dailyreview_category table
+    var sqlQuery = `SELECT
+                    EXISTS 
+                    (SELECT true FROM dailyreview_category WHERE category_name=$1)`;
+
+    dailyReviewClient.query(sqlQuery, [req.body.categoryNameOld]).then(function (data) {
+        var categoryNameExists = data[0]['exists'];
+        //console.log(typeof categoryNameExists);
+        if (categoryNameExists) {
+            var sqlQuery = `UPDATE dailyreview_category
                     SET category_name=$1, category_label=$2
                     WHERE category_name=$3 AND user_id=$4`;
 
-    dailyReviewClient.query(sqlQuery, [req.body.categoryNameNew, req.body.categoryLabelNew, req.body.categoryNameOld, req.user.user_id, req.body.categoryNameOld]).then(function (data) {
-        res.write(JSON.stringify(data, null, "  "));
-        res.write("Category updated successfully");
-        res.end();
+            dailyReviewClient.query(sqlQuery, [req.body.categoryNameNew, req.body.categoryLabelNew, req.body.categoryNameOld, req.user.user_id, req.body.categoryNameOld]).then(function (data) {
+                res.write(JSON.stringify(data, null, "  "));
+                res.write("Category updated successfully");
+                res.end();
+            }).catch(function (err) {
+                res.status(500).send("Internal server error");
+                res.end();
+                console.log("Category not updated. Error ");
+                console.log(err);
+            });
+        } else {
+            res.send("Category name not found");
+            res.end();
+            console.log("Category name not found");
+        }
     }).catch(function (err) {
         res.status(500).send("Internal server error");
         res.end();
-        console.log("Category not updated. Error ");
+        console.log("Error occurred ");
         console.log(err);
     });
 
@@ -267,32 +288,57 @@ app.post('/editCategory', checkAuthentication, function (req, res) {
 // Router for deleting categories
 app.post('/deleteCategory', checkAuthentication, function (req, res) {
     // Name of fields is categoryName
-    var sqlQuery = `DELETE
-                    FROM dailyreview_score
-                    WHERE category_id=(SELECT category_id FROM dailyreview_category WHERE category_name=$1)
-                    AND userdate_id=(SELECT userdate_id FROM dailyreview_userdate WHERE user_id=$2)`;
+    var sqlQuery = `SELECT
+                    EXISTS 
+                    (SELECT true FROM dailyreview_category WHERE category_name=$1)`;
 
-    dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
-        console.log("Scores corresponding to the category deleted from the table dailyreview_score");
+    dailyReviewClient.query(sqlQuery, [req.body.categoryNameOld]).then(function (data) {
+        var categoryNameExists = data[0]['exists'];
+        //console.log(typeof categoryNameExists);
+        if (categoryNameExists) {
 
-        var sqlQuery = `DELETE
+            var sqlQuery = `DELETE
+                            FROM dailyreview_score
+                            WHERE category_id=(SELECT category_id FROM dailyreview_category WHERE category_name=$1)
+                            AND userdate_id=(SELECT userdate_id FROM dailyreview_userdate WHERE user_id=$2)`;
+
+            dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
+                console.log("Scores corresponding to the category deleted from the table dailyreview_score");
+
+                var sqlQuery = `DELETE
                     FROM dailyreview_category
                     WHERE category_name=$1 AND user_id=$2`;
 
-        dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
-            res.send("Category deleted successfully");
-            res.end();
-        }).catch(function (err) {
-            res.send("Category not deleted. Error !");
-            res.end();
-            console.log("Category not deleted from dailyreview_category table. Following is the error");
-            console.log(err);
-        });
+                dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
+                    res.send("Category deleted successfully");
+                    res.end();
+                }).catch(function (err) {
+                    res.send("Category not deleted. Error !");
+                    res.end();
+                    console.log("Category not deleted from dailyreview_category table. Following is the error");
+                    console.log(err);
+                });
 
+            }).catch(function (err) {
+                console.log("Scores not deleted from dailyreview_score table. Following is the error");
+                console.log(err);
+            });
+
+        } else {
+            res.send("Category name not found");
+            res.end();
+            console.log("Category name not found");
+        }
     }).catch(function (err) {
-        console.log("Scores not deleted from dailyreview_score table. Following is the error");
+        res.status(500).send("Internal server error");
+        res.end();
+        console.log("Error occurred ");
         console.log(err);
     });
+
+
+    //
+
 
 });
 
@@ -303,10 +349,12 @@ app.post('/reviewDay', checkAuthentication, function (req, res) {
     // How to get an array in a query string?
     // How to get an array in the body of a post request
 
-    console.log(req.body.categoryName);
-    console.log(req.body.categoryScore);
-    console.log(req.user.user_id)
-    console.log(req.body.date);
+    //console.log(req.body.categoryName);
+    //console.log(req.body.categoryScore);
+    //console.log(req.user.user_id)
+    //console.log(req.body.date);
+
+
 
     // How to enter all this data into the respective table in the database
     // Insert user_id and date into userdate table
