@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily Review</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+    <h3> List of existing categories </h3>
+
+    <button type="button" onclick="loadCategory(value)" value="testValue"> Category</button>
+
+    <div id="displayCategory">
+        <p>Displaying categories</p>
+        <form>
+            <input type
+        </form>
+    </div>
+
+
+
+</body>
+
+<style>
+    .marginTop {
+        margin-top: 20px;
+    }
+</style>
+
+<script>
+    
+    function loadCategory(value) {
+
+        console.log(value);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                //render(JSON.parse(this.responseText));
+                //console.log(JSON.parse(this.responseText)[2].name);
+            }
+        }
+
+        xhttp.open("POST", "http://localhost:2346/category", true);
+        xhttp.send(value);
+    }
+
+    function render(jsonData) {
+        // Select the relevant UI element and append data
+        document.getElementById("displayCategory").innerHTML = JSON.stringify(jsonData, null, "  ");
+    }
+
+</script>
+
+</html>

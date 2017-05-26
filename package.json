@@ -1,0 +1,30 @@
+{
+  "name": "daily-review",
+  "version": "1.0.0",
+  "description": "App for reviewing tasks/ goals for the day (personal and professional) ",
+  "main": "dailyReview.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsinecos/daily-review.git"
+  },
+  "author": "dsinecos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dsinecos/daily-review/issues"
+  },
+  "homepage": "https://github.com/dsinecos/daily-review#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "connect-pg-simple": "^4.2.0",
+    "express": "^4.15.3",
+    "express-session": "^1.15.3",
+    "express-validator": "^3.2.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "pg": "^6.2.2",
+    "pg-promise": "^5.7.1"
+  }
+}
