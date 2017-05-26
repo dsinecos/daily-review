@@ -1,0 +1,20 @@
+App Structure
+
+Routes
+
+Category
+POST /addCategory
+POST /editCategory
+POST /deleteCategory
+GET  /getCategory
+
+Review
+POST /addReview
+GET  /getReview
+
+Authentication
+POST / - (Login Page)
+POST /signup
+GET  / - (For testing successive requests after login)
+GET  /failed
+GET  /successLogin
