@@ -18,7 +18,11 @@ module.exports = function (req, res) {
         if (data.length === 0) {
             res.send("There are no categories to display at this point");
         } else {
-            res.send(JSON.stringify(data, null, "  "));
+            res.write("Following categories were retrieved for the user");
+            res.write("\n");
+            res.write(JSON.stringify(req.user, null, "  "));
+            res.write(JSON.stringify(data, null, "  "));
+            res.end();
         }
 
     }).catch(function (error) {

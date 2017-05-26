@@ -1,3 +1,3 @@
 module.exports = function(req, res) {
-    res.send("Login Failed, Try again");
+    res.status(401).send("Login Failed, Try again");
 }

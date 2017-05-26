@@ -16,6 +16,8 @@ module.exports = function(req, res) {
                     WHERE dailyreview_users.user_id=$1 AND dailyreview_userdate.dateentry=$2`
 
     dailyReviewClient.query(sqlQuery, [req.user.user_id, date]).then(function (data) {
-        res.send(JSON.stringify(data, null, "  "));
+        res.write("Following is the review for the date " + date);
+        res.write(JSON.stringify(data, null, "  "));
+        res.end();
     });
 }
