@@ -1,0 +1,259 @@
+{
+	"variables": [],
+	"info": {
+		"name": "dailyreview_AuthenticationTesting",
+		"_postman_id": "9b2d01c7-f3a1-93c5-0a97-b4ed5840a3e3",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "dailyreview Authentication Testing - This should login successfully",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Baba",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "Ramdev",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "dailyreview Authentication Testing - This should login successfully",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Bruce",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "Wayne",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "dailyreview Authentication Testing - This should login successfully",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Natasha",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "Romanoff",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "For Testing successive requests from a logged in user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"This is the name of the currently logged in user\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Make sure to have looged in first using Post request for login at localhost:2346/"
+			},
+			"response": []
+		},
+		{
+			"name": "For testing Failed authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 401\"] = responseCode.code === 401;",
+							"tests[\"Body matches string\"] = responseBody.has(\"Login Failed, Try again\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "ghanta",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "ghanta",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": "This login should fail for a successful test"
+			},
+			"response": []
+		},
+		{
+			"name": "Use this for Testing /signup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"Account created successfully\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/signup",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Gabdu",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "Ganesh",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

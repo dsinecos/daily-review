@@ -1,0 +1,475 @@
+{
+	"variables": [],
+	"info": {
+		"name": "dailyreview_dayReviewTesting",
+		"_postman_id": "e973aa62-3f42-fbc5-88bb-ba8d64ff02c9",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Use this to Test /reviewDay",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"Date reviewed successfully\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/reviewDay",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName[0]",
+							"value": "Meditation",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[1]",
+							"value": "Poker",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[2]",
+							"value": "Bicycling",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[3]",
+							"value": "Swimming",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[0]",
+							"value": "3",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[1]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[2]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[3]",
+							"value": "3",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "date",
+							"value": "05/24/2017",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": "Update date and categoryName fields accordingly"
+			},
+			"response": []
+		},
+		{
+			"name": "Use this to Test /getReview",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"Following is the review for the date\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/getReview?date=05/24/2017",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Update date in the query string accordingly"
+			},
+			"response": []
+		},
+		{
+			"name": "Use this to Test /reviewDay",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"Date reviewed successfully\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/reviewDay",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName[0]",
+							"value": "Meditation",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[1]",
+							"value": "Poker",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[2]",
+							"value": "Bicycling",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[3]",
+							"value": "Swimming",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[0]",
+							"value": "2",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[1]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[2]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[3]",
+							"value": "3",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "date",
+							"value": "05/22/2017",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": "Make sure that a review hasn't been provided for the date you're entering as duplicates would return an error"
+			},
+			"response": []
+		},
+		{
+			"name": "Use this to Test /reviewDay - Unequal number of categoryNames and categoryScores",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"There have been validation errors\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/reviewDay",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName[0]",
+							"value": "Meditation",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[1]",
+							"value": "Poker",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[2]",
+							"value": "Bicycling",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[3]",
+							"value": "Swimming",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[0]",
+							"value": "2",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[1]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[2]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[3]",
+							"value": "3",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "date",
+							"value": "05/22/2017",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Use this to Test /reviewDay - Unequal number of categoryNames and categoryScores ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"There have been validation errors\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/reviewDay",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName[0]",
+							"value": "Meditation",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[1]",
+							"value": "Poker",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryName[2]",
+							"value": "Bicycling",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryName[3]",
+							"value": "Swimming",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[0]",
+							"value": "2",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[1]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[2]",
+							"value": "1",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryScore[3]",
+							"value": "3",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "date",
+							"value": "05/22/2017",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Use this to Test /reviewDay - No categoryNames and categoryScores provided",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"There have been validation errors\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/reviewDay",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName[0]",
+							"value": "Meditation",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryName[1]",
+							"value": "Poker",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryName[2]",
+							"value": "Bicycling",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryName[3]",
+							"value": "Swimming",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryScore[0]",
+							"value": "2",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryScore[1]",
+							"value": "1",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryScore[2]",
+							"value": "1",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "categoryScore[3]",
+							"value": "3",
+							"type": "text",
+							"enabled": false
+						},
+						{
+							"key": "date",
+							"value": "05/22/2017",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
