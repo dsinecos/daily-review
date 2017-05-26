@@ -420,16 +420,19 @@ app.post('/reviewDay', checkAuthentication, function (req, res) {
                                     VALUES ($1, $2, $3)`;
 
                             dailyReviewClient.query(sqlQuery, [dataForID[0]["userdate_id"], category_id[0]["category_id"], req.body.categoryScore[count]]).then(function (data) {
-                                res.send("Date reviewed successfully");
-                                res.end();
-                                return;
+                                //res.send("Date reviewed successfully");
+                                //res.end();
+                                //return;
                             }).catch(function (err) {
+                                console.log("Count " + count);
+                                console.log("Integer " + 1);
                                 res.status(500).send("Internal server error");
                                 res.end();
                                 console.log("Error inserting data into dailyreview_score. Following is the error")
                                 console.log(err);
                             });
                         }).catch(function (err) {
+                            //console.log(2);
                             res.status(500).send("Internal server error");
                             res.end();
                             console.log("Error selecting data from dailyreview_category. Following is the error")
@@ -438,12 +441,16 @@ app.post('/reviewDay', checkAuthentication, function (req, res) {
                     }
 
                 }).catch(function (err) {
+                    //console.log(3);
                     res.status(500).send("Internal server error");
                     res.end();
                     console.log("Error while selecting data from userdate table. Following is the error");
                     console.log(err);
                 });
+                res.send("Date reviewed successfully");
+                res.end();
             }).catch(function (err) {
+                //console.log(4);
                 res.status(500).send("Internal server error");
                 res.end();
                 console.log("Error occurred while inserting row in dailyreview_userdate. Following is the error")
@@ -467,6 +474,7 @@ app.get('/getReview', checkAuthentication, function (req, res) {
     // Use params to get the date
     // Write the SQL query to regenerate the categories for a date and the corresponding scores
     var date = req.query.date;
+    
     var sqlQuery = `SELECT dailyreview_users.user_name as User, dailyreview_category.category_name as Category, dailyreview_userdate.dateentry as DataEntry, dailyreview_score.score as Score
                     FROM dailyreview_users
                     JOIN dailyreview_userdate 
