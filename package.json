@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/dsinecos/daily-review#readme",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "connect-pg-simple": "^4.2.0",
     "express": "^4.15.3",
