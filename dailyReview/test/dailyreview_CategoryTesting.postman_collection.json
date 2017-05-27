@@ -8,6 +8,52 @@
 	},
 	"item": [
 		{
+			"name": "localhost:2346/",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");",
+							"console.log(responseBody);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Bruce",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "Wayne",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "Use this to Test /addCategory Router and populate Category Database",
 			"event": [
 				{
@@ -16,7 +62,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Body is correct\"] = responseBody === \"Category added successfully\";",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -61,7 +108,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Body is correct\"] = responseBody === \"Category added successfully\";",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -106,7 +154,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Body is correct\"] = responseBody === \"Category added successfully\";",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -151,7 +200,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Body is correct\"] = responseBody === \"Category added successfully\";",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -196,7 +246,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Body is correct\"] = responseBody === \"Category added successfully\";",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -241,7 +292,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Body is correct\"] = responseBody === \"Category added successfully\";",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -286,7 +338,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Body matches string\"] = responseBody.has(\"Following categories were retrieved for the user\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"Following categories were retrieved for the user\");",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -332,7 +385,8 @@
 						"exec": [
 							"tests[\"Body matches string\"] = responseBody.has(\"Category updated successfully\");",
 							"",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -383,7 +437,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Body matches string\"] = responseBody.has(\"Category deleted successfully\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"Category deleted successfully\");",
+							"console.log(responseBody);"
 						]
 					}
 				}

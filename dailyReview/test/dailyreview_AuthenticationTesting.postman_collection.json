@@ -16,7 +16,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -61,7 +62,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -106,7 +108,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"Logged in successfully\");",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -151,7 +154,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Body matches string\"] = responseBody.has(\"This is the name of the currently logged in user\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"This is the name of the currently logged in user\");",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -174,7 +178,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 401\"] = responseCode.code === 401;",
-							"tests[\"Body matches string\"] = responseBody.has(\"Login Failed, Try again\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"Login Failed, Try again\");",
+							"console.log(responseBody);"
 						]
 					}
 				}
@@ -219,7 +224,8 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Body matches string\"] = responseBody.has(\"Account created successfully\");"
+							"tests[\"Body matches string\"] = responseBody.has(\"Account created successfully\");",
+							"console.log(responseBody);"
 						]
 					}
 				}

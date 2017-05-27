@@ -1,0 +1,10 @@
+#! /bin/bash
+# This is the bash script to build dailyreview database tables and set the user table with dummy data
+
+#for i in 1 2 3 4 5 6 7 8 9 10; do
+# node /home/divyanshu/programming/daily-review/dailyReview/test/buildDailyReview.js $i
+#done
+
+node /home/divyanshu/programming/daily-review/dailyReview/test/buildDailyReview.js
+newman run /home/divyanshu/programming/daily-review/dailyReview/test/dailyreview_AuthenticationTesting.postman_collection.json
+newman run /home/divyanshu/programming/daily-review/dailyReview/test/dailyreview_CategoryTesting.postman_collection.json
