@@ -1,6 +1,101 @@
 var dailyReviewClient = require('../../../db.js');
+var joi = require('joi');
 
 module.exports = function (req, res) {
+
+    var length;
+
+    if(req.body.categoryName) {
+        length = req.body.categoryName.length;
+    } else {
+        length = 0;
+    }
+
+    const schema = joi.object().keys({
+        date: joi.date().max('now').required(),
+        categoryName: joi.array().items().min(1).unique().required(),
+        categoryScore: joi.array().items(joi.number().min(1).max(4)).min(1).length(length).required()
+    });
+
+    joi.validate({ date: req.body.date, categoryName: req.body.categoryName, categoryScore: req.body.categoryScore }, schema, function (err, value) {
+        if (err) {
+            res.status(400).send('There have been validation errors');
+            res.end();
+            console.log("There have been validation errors");
+            console.log(err.details);
+        } else {
+            reviewDay();
+        }
+    });
+
+    function reviewDay() {
+
+        var sqlQuery = `INSERT 
+                    INTO dailyreview_userdate (user_id, dateentry)
+                    VALUES ($1, $2)`;
+
+        dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.date]).then(function () {
+
+            var sqlQuery = `SELECT userdate_id
+                        FROM dailyreview_userdate
+                        WHERE user_id=$1 AND dateentry=$2`;
+
+            dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.date]).then(function (dataForID) {
+                //console.log(dataForID[0]["userdate_id"]);
+                //console.log("reformed userdateid " + userdate_id.userdate_id);
+                for (var i = 0; i < req.body.categoryName.length; i++) {
+                    let count = i;
+                    var sqlQuery = `SELECT category_id
+                                FROM dailyreview_category
+                                WHERE category_name=$1`;
+
+                    dailyReviewClient.query(sqlQuery, [req.body.categoryName[count]]).then(function (category_id) {
+                        //console.log("Value of count " + count);
+                        //console.log("req.body.categoryScore " + req.body.categoryScore[count]);
+
+                        var sqlQuery = `INSERT
+                                    INTO dailyreview_score (userdate_id, category_id, score)
+                                    VALUES ($1, $2, $3)`;
+
+                        dailyReviewClient.query(sqlQuery, [dataForID[0]["userdate_id"], category_id[0]["category_id"], req.body.categoryScore[count]]).then(function (data) {
+                            //res.send("Date reviewed successfully");
+                            //res.end();
+                            //return;
+                        }).catch(function (err) {
+                            console.log("Count " + count);
+                            console.log("Integer " + 1);
+                            res.status(500).send("Internal server error");
+                            res.end();
+                            console.log("Error inserting data into dailyreview_score. Following is the error")
+                            console.log(err);
+                        });
+                    }).catch(function (err) {
+                        //console.log(2);
+                        res.status(500).send("Internal server error");
+                        res.end();
+                        console.log("Error selecting data from dailyreview_category. Following is the error")
+                        console.log(err);
+                    });
+                }
+
+            }).catch(function (err) {
+                //console.log(3);
+                res.status(500).send("Internal server error");
+                res.end();
+                console.log("Error while selecting data from userdate table. Following is the error");
+                console.log(err);
+            });
+            res.send("Date reviewed successfully");
+            res.end();
+        }).catch(function (err) {
+            //console.log(4);
+            res.status(500).send("Internal server error");
+            res.end();
+            console.log("Error occurred while inserting row in dailyreview_userdate. Following is the error")
+            console.log(err);
+        });
+
+    }
 
     // Fields to be provided date, category, score 
     // Can be any number of categories and equal number of scores
@@ -15,6 +110,7 @@ module.exports = function (req, res) {
     //req.checkBody('date','Invalid Date')
     //req.checkBody('categoryName',)
 
+/*
     req.checkBody('categoryName', "Category data provided for review is not valid").categoryDataValidationForReview(req.body.categoryScore);
     //console.log("Printing from req.body.categoryName " + req.body.categoryName);
     //console.log("Printing from req.body.categoryScore" + req.body.categoryScore);
@@ -99,7 +195,7 @@ module.exports = function (req, res) {
     // Get userdate_id using user.id and body.date from userdate
     // Merge the two arrays of category names and scores - How?
     // Insert userdate_id, category_id and score into score table
-
+*/
 
 
 }

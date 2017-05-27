@@ -1,3 +1,4 @@
+/*
 module.exports = {
     categoryDataValidationForReview: function (categoryName, categoryScore) {
         var validationResult;
@@ -26,3 +27,4 @@ module.exports = {
 
     }
 }
+*/
