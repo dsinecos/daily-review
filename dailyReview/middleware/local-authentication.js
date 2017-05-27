@@ -1,5 +1,6 @@
 var Strategy = require("passport-local").Strategy;
 var pg = require('pg');
+var bcrypt = require('bcrypt');
 
 // For authentication related database operations 
 var connectionString = "pg://admin:guest@localhost:5432/dailyreview";
@@ -17,12 +18,19 @@ module.exports = function (passport) {
             findByUsername(username, function (err, user) {
                 if (err) { return cb(err); }
                 if (!user) { return cb(null, false); }
-                if (user.password != password) { return cb(null, false); }
-                //console.log("-----------------------------------------");
-                //console.log("Inside findByUserName");
-                //console.log("Value of variable username " + username);
-                //console.log(" " + JSON.stringify(user, null, "  "));
-                return cb(null, user);
+                
+                bcrypt.compare(password, user.password).then(function (result) {
+                    if(result) {
+                        return cb(null, user);
+                    } else {
+                        return cb(null, false);
+                    }
+                }).catch(function(err) {
+                    res.status(500).send("Internal server error ");
+                    res.end();
+                    console.log("Error while using bcrypt to compare the user entered password with the hash in the database. Following is the error");
+                    console.log(err);
+                });                
             });
         }));
 
