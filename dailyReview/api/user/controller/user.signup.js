@@ -19,6 +19,19 @@ module.exports = function (req, res) {
             dailyReviewClient.query(sqlQuery, [req.body.username, hash]).then(function (data) {
                 res.write("Account created successfully");
                 res.end();
+            }).catch(function (err) {
+                // How to check if the error is violating duplication constraint?
+                if (err.code === '23505') {
+                    res.write("Please choose a different username, that username already exists");
+                    res.end();
+                    console.log("Error due to duplicate username fields in the dailyreview_user table. Following is the error");
+                    console.log(err);
+                } else {
+                    res.status(500).send("Internal server error");
+                    res.end();
+                    console.log("Error while inserting record into dailyreview_user table. Following is the error");
+                    console.log(err);
+                }
             });
 
         }).catch(function (err) {

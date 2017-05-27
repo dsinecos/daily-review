@@ -23,7 +23,7 @@ client.query("DROP TABLE IF EXISTS dailyreview_journal CASCADE");
 client.query("DROP TABLE IF EXISTS dailyreview_journalresponse CASCADE");
 
 
-client.query("CREATE TABLE IF NOT EXISTS dailyreview_users(user_id SERIAL PRIMARY KEY, user_name varchar(64), password varchar(128))");
+client.query("CREATE TABLE IF NOT EXISTS dailyreview_users(user_id SERIAL PRIMARY KEY, user_name varchar(64) UNIQUE, password varchar(128))");
 client.query("CREATE TABLE IF NOT EXISTS dailyreview_category(user_id int NOT NULL, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), category_id SERIAL PRIMARY KEY, category_name varchar(64), category_label varchar(64), UNIQUE (user_id, category_name))");
 client.query("CREATE TABLE IF NOT EXISTS dailyreview_userdate(user_id int, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), dateentry date NOT NULL, userdate_id SERIAL PRIMARY KEY, UNIQUE (user_id, dateentry))");
 client.query("CREATE TABLE IF NOT EXISTS dailyreview_score(userdate_id int, FOREIGN KEY (userdate_id) REFERENCES dailyreview_userdate(userdate_id), category_id int, FOREIGN KEY (category_id) REFERENCES dailyreview_category(category_id), score int)");
