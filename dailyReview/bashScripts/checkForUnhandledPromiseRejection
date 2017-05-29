@@ -14,11 +14,13 @@
 #grep -o '.catch' $i | wc -l
 
 for i in $(find -type f | egrep -v '/node_modules/'); do
-numberOfThen=$(grep -o '.then' $i | wc -l)
-numberOfCatch=$(grep -o '.catch' $i | wc -l)
+numberOfThen=$(fgrep -o '.then' $i | wc -l)
+numberOfCatch=$(fgrep -o '.catch' $i | wc -l)
 count=$((numberOfThen-numberOfCatch))
 if [ $count -gt 0 ]
- then 
+ then
+echo ".then appears " $numberOfThen " times in file " 
+echo ".catch appears " $numberOfCatch " times in file "  
 echo "Check file " $i " for a difference of " $count 
 fi
 done
