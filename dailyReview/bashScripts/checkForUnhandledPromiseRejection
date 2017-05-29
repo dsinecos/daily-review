@@ -1,0 +1,28 @@
+#! /bin/bash
+# This bash script runs through all the files in your directory, calculates the number of times .then and .catch appear in each file and returns you the filenames where they are not equal
+
+# To print all the files in a directory and sub-directory except ones which have /node_modules/ in their pathname
+
+#find $PWD -type f | egrep -v '/node_modules/'
+#echo ".then appears " $numberOfThen " times in file " 
+#echo ".catch appears " $numberOfCatch " times in file " 
+#echo $count
+#diffInThenCatch=$numberOfThen-$numberOfCatch
+#echo $diffInThenCatch
+#echo $numberOfCatch
+#grep -o '.then' $i | wc -l
+#grep -o '.catch' $i | wc -l
+
+for i in $(find -type f | egrep -v '/node_modules/'); do
+numberOfThen=$(grep -o '.then' $i | wc -l)
+numberOfCatch=$(grep -o '.catch' $i | wc -l)
+count=$((numberOfThen-numberOfCatch))
+if [ $count -gt 0 ]
+ then 
+echo "Check file " $i " for a difference of " $count 
+fi
+done
+
+
+
+

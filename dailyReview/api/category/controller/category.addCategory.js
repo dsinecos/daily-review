@@ -1,6 +1,6 @@
 var dailyReviewClient = require('../../../db.js');
 
-module.exports = function (req, res) {
+module.exports = function (req, res, next) {
     //Name of the fields is categoryName and categoryLabel
     //res.write(req.body.categoryName);
     //res.write(req.body.categoryLabel);
@@ -21,6 +21,8 @@ module.exports = function (req, res) {
             res.status(400).send('There have been validation errors: ' + JSON.stringify(result.array(), null, "  "));
             return;
         }
+    }).catch(function(error) {
+        
     });
 
     dailyReviewClient.query(sqlQuery, [req.user.user_id, req.body.categoryName, req.body.categoryLabel]).then(function (data) {
@@ -28,8 +30,13 @@ module.exports = function (req, res) {
         res.send("Category added successfully");
     }).catch(function (error) {
         res.status(500).send("Internal server error");
+        var message = 
         console.log("Category not added to database. Following error occured");
-        console.log(error);
+        var errorResponse = new Error();
+        errorResponse.error = error;
+        errorResponse.message = "Category not added to database. Following error occured"
+        next(errorResponse);
+        //console.log(error);
     });
 
 }
