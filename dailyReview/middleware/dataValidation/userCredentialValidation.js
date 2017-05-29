@@ -21,12 +21,16 @@ module.exports = function userCredentialValidation(req, res, next) {
         res.locals.userCredentialValidation = true;
         next();
     }).catch(function (err) {
-        res.write("Validation errors in username-password. We are inside the middleware");
+        
+        
+        res.write("Validation errors in username-password");
         res.end();
         console.log("Validation errors in username-password. Following is the error");
         //console.log(err);
         console.log(err.name);
         console.log(err.details);
+        
+        //next(err);
     });
 
 }

@@ -28,3 +28,5 @@ app.checkAuthentication = require('./middleware/checkAuthentication.js');
 
 // Initializing Routers
 require('./api/routes.js')(app);
+
+//app.use(require('./middleware/errorHandler.js'));

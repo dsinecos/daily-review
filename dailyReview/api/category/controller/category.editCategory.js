@@ -1,6 +1,6 @@
 var dailyReviewClient = require('../../../db.js');
 
-module.exports = function (req, res) {
+module.exports = function (req, res, next) {
     //Name of fields is categoryNameOld, categoryNameNew, categoryLabelNew
 
     // To check if a category by the name categoryNameOld exists in the dailyreview_category table
@@ -27,9 +27,10 @@ module.exports = function (req, res) {
                 console.log(err);
             });
         } else {
-            res.send("Category name not found");
+            res.write("Category name not found");
             res.end();
             console.log("Category name not found");
+            //next("Category name not found");
         }
     }).catch(function (err) {
         res.status(500).send("Internal server error");
