@@ -37,6 +37,11 @@ module.exports = function (req, res) {
             res.write("Following is the review for the date " + date);
             res.write(JSON.stringify(data, null, "  "));
             res.end();
+        }).catch(function(error) {
+            res.status(500).send("Internal server error");
+            res.end();
+            console.log("There has been an error in /getReview while retrieving records from the database. Following is the error");
+            console.log(error);
         });
 
     }

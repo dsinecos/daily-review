@@ -187,6 +187,11 @@ module.exports = function (req, res) {
                 console.log(err);
             });
         }
+    }).catch(function(err) {
+        res.status(400).send("There have been validation errors");
+        res.end();
+        console.log("There have been validation errors in categoryName and categoryScore in /addReview");
+        console.log(err);
     });
 
     // How to enter all this data into the respective table in the database
