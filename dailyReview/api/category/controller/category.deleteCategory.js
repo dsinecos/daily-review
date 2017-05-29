@@ -10,10 +10,10 @@ module.exports = function (req, res) {
     function categoryNameExists() {
 
         var sqlQuery = `SELECT
-                    EXISTS 
-                    (SELECT true FROM dailyreview_category WHERE category_name=$1)`;
+                        EXISTS 
+                        (SELECT true FROM dailyreview_category WHERE category_name=$1 AND user_id=$2)`;
 
-        dailyReviewClient.query(sqlQuery, [req.body.categoryName]).then(checkIfCategoryNameExists).catch(function (err) {
+        dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(checkIfCategoryNameExists).catch(function (err) {
             res.status(500).send("Internal server error");
             res.end();
             console.log("Error occurred ");
@@ -46,10 +46,7 @@ module.exports = function (req, res) {
                     WHERE category_id=(SELECT category_id FROM dailyreview_category WHERE category_name=$1)
                     AND userdate_id=(SELECT userdate_id FROM dailyreview_userdate WHERE user_id=$2)`;
 
-        dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(function (data) {
-            //console.log("Scores corresponding to the category deleted from the table dailyreview_score");
-            deleteScoreForDeletedCategory();
-        }).catch(function (err) {
+        dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(deleteScoreForDeletedCategory()).catch(function (err) {
             console.log("Scores not deleted from dailyreview_score table. Following is the error");
             console.log(err);
         });
