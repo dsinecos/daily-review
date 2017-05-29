@@ -9,6 +9,8 @@ authenticationClient.connect();
 
 module.exports = function (passport) {
 
+    //Implement data validation using joi
+
     passport.use(new Strategy(
         function (username, password, cb) {
             //console.log("Inside local strategy");

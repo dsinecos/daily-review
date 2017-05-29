@@ -4,11 +4,11 @@ module.exports = function(app) {
     
     // Authentication routes
     
-    app.post('/', passport.authenticate('local', { failureRedirect: '/failed' }), require('./user/controller/user.login.js'));
+    app.post('/', require('../middleware/dataValidation/userCredentialValidation.js'), passport.authenticate('local', { failureRedirect: '/failed' }), require('./user/controller/user.login.js'));
     app.get('/failed', require('./user/controller/user.loginFailed.js'));
     app.get('/successLogin', app.checkAuthentication, require('./user/controller/user.successLogin.js'));
     app.get('/', app.checkAuthentication, require('./user/controller/user.successiveRequest.js'));
-    app.post('/signup', require('./user/controller/user.signup.js'));
+    app.post('/signup', require('../middleware/dataValidation/userCredentialValidation.js'), require('./user/controller/user.signup.js'));
     
 
     // Category routes

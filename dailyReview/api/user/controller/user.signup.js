@@ -1,17 +1,18 @@
 var dailyReviewClient = require('../../../db.js');
 var bcrypt = require('bcrypt');
-var Joi = require('joi');
+//var joi = require('joi');
 
 module.exports = function (req, res) {
-
-    const schema = Joi.object().keys({
-        username: Joi.string().required().alphanum().min(3).max(30),
-        password: Joi.string().min(1).required()
+    
+    /*
+    const schema = joi.object().keys({
+        username: joi.string().required().alphanum().min(3).max(30),
+        password: joi.string().min(1).required()
     });
 
     var validationResult = new Promise(function (resolve, reject) {
 
-        var result = Joi.validate({ username: req.body.username, password: req.body.password }, schema);
+        var result = joi.validate({ username: req.body.username, password: req.body.password }, schema);
         if (result.error === null) {
             resolve(result);
         } else {
@@ -25,7 +26,13 @@ module.exports = function (req, res) {
         console.log("Validation errors in username-password. Following is the error");
         console.log(err.name);
         console.log(err.details);
-    })
+    });
+    */
+
+    if(res.locals.userCredentialValidation === true) {
+        addUserIntoDatabase();
+    }
+
 
     function addUserIntoDatabase(validationResult) {
 
