@@ -1,7 +1,7 @@
+
 // Initializing connection with Database and setting up Table
 var pg = require('pg');
-
-var connectionString = process.env.DATABASE_URL || "pg://admin:guest@localhost:5432/dailyreview";
+var connectionString = "pg://admin:guest@localhost:5432/dailyreview";
 
 /*
 var config = {
@@ -31,7 +31,7 @@ var client = new pg.Client(connectionString);
 client.connect();
 
 var endOfDropTablePool = 5;
-var endOfCreateTablePool = 5;
+//var endOfCreateTablePool = 5;
 
 function checkEndOfDropTablePool() {
     if (endOfDropTablePool === 0) {
@@ -43,6 +43,7 @@ function checkEndOfDropTablePool() {
     }
 }
 
+/*
 function checkEndOfCreateTablePool() {
     if (endOfCreateTablePool === 0) {
         setupDatabase();
@@ -51,9 +52,10 @@ function checkEndOfCreateTablePool() {
         endOfCreateTablePool--;
     }
 }
+*/
 
 function err(error) {
-    //console.log(JSON.stringify(error, null, "  "));
+    console.log(JSON.stringify(error, null, "  "));
 }
 
 client.query("DROP TABLE IF EXISTS dailyreview_category CASCADE").then(checkEndOfDropTablePool).catch(err);
@@ -65,13 +67,31 @@ client.query("DROP TABLE IF EXISTS dailyreview_journalresponse CASCADE").then(ch
 
 function buildTable() {
 
+    var createTableQuery = ["CREATE TABLE IF NOT EXISTS dailyreview_users(user_id SERIAL PRIMARY KEY, user_name varchar(64) UNIQUE, password varchar(128))", "CREATE TABLE IF NOT EXISTS dailyreview_category(user_id int NOT NULL, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), category_id SERIAL PRIMARY KEY, category_name varchar(64), category_label varchar(64), UNIQUE (user_id, category_name))", "CREATE TABLE IF NOT EXISTS dailyreview_userdate(user_id int, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), dateentry date NOT NULL, userdate_id SERIAL PRIMARY KEY, UNIQUE (user_id, dateentry))", "CREATE TABLE IF NOT EXISTS dailyreview_score(userdate_id int, FOREIGN KEY (userdate_id) REFERENCES dailyreview_userdate(userdate_id), category_id int, FOREIGN KEY (category_id) REFERENCES dailyreview_category(category_id), score int)", "CREATE TABLE IF NOT EXISTS dailyreview_journal(user_id int, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), journalquestion_id SERIAL PRIMARY KEY, journal_question text)", "CREATE TABLE IF NOT EXISTS dailyreview_journalresponse(userdate_id int, FOREIGN KEY (userdate_id) REFERENCES dailyreview_userdate(userdate_id), journalquestion_id int, FOREIGN KEY (journalquestion_id) REFERENCES dailyreview_journal(journalquestion_id), journalquestionresponse text)"];
+
+    var i = 5;
+    createTable(i);
+
+    function createTable(i) {
+        if (i >= 0) {
+            //console.log("Completing database query number " + i);
+            client.query(createTableQuery[5 - i]).then(createTable(i - 1)).catch(err);
+        } else {
+            //console.log("Final value of i " + i);
+            //console.log("All executions complete");
+            setupDatabase();
+        }
+
+    }
+
+    /*
     client.query("CREATE TABLE IF NOT EXISTS dailyreview_users(user_id SERIAL PRIMARY KEY, user_name varchar(64) UNIQUE, password varchar(128))").then(checkEndOfCreateTablePool).catch(err);
     client.query("CREATE TABLE IF NOT EXISTS dailyreview_category(user_id int NOT NULL, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), category_id SERIAL PRIMARY KEY, category_name varchar(64), category_label varchar(64), UNIQUE (user_id, category_name))").then(checkEndOfCreateTablePool).catch(err);
     client.query("CREATE TABLE IF NOT EXISTS dailyreview_userdate(user_id int, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), dateentry date NOT NULL, userdate_id SERIAL PRIMARY KEY, UNIQUE (user_id, dateentry))").then(checkEndOfCreateTablePool).catch(err);
     client.query("CREATE TABLE IF NOT EXISTS dailyreview_score(userdate_id int, FOREIGN KEY (userdate_id) REFERENCES dailyreview_userdate(userdate_id), category_id int, FOREIGN KEY (category_id) REFERENCES dailyreview_category(category_id), score int)").then(checkEndOfCreateTablePool).catch(err);
     client.query("CREATE TABLE IF NOT EXISTS dailyreview_journal(user_id int, FOREIGN KEY (user_id) REFERENCES dailyreview_users(user_id), journalquestion_id SERIAL PRIMARY KEY, journal_question text)").then(checkEndOfCreateTablePool).catch(err);
     client.query("CREATE TABLE IF NOT EXISTS dailyreview_journalresponse(userdate_id int, FOREIGN KEY (userdate_id) REFERENCES dailyreview_userdate(userdate_id), journalquestion_id int, FOREIGN KEY (journalquestion_id) REFERENCES dailyreview_journal(journalquestion_id), journalquestionresponse text)").then(checkEndOfCreateTablePool).catch(err);
-
+    */
 }
 
 function setupDatabase() {
@@ -165,12 +185,14 @@ function setupDatabase() {
                 var timeOut = 1/Math.pow(10, exponent)
                 setTimeout(exitBuild, timeOut);
                 */
-                setTimeout(exitBuild, 1000);
+                //setTimeout(exitBuild, 1000);
+                exitBuild();
                 function exitBuild() {
+                    process.exit();
                     client.query("SELECT * FROM dailyreview_users").then(function (data) {
                         //console.log("Timeout was for " + timeOut + " milliseconds");
                         console.log("Number of user entries retrieved " + data.rows.length);
-                        process.exit();
+
                     }).catch(err);
                     //process.exit();
                 }
