@@ -29,6 +29,15 @@ pool.on('error', function (err, client) {
 
 var client = new pg.Client(connectionString);
 client.connect();
+client.on('end', function () {
+    process.exit();
+    console.log("Client was disconnected");
+});
+
+client.on('drain', function () {
+    //process.exit();
+    //console.log("Client queue drained");
+});
 
 var endOfDropTablePool = 5;
 //var endOfCreateTablePool = 5;
@@ -185,15 +194,18 @@ function setupDatabase() {
                 var timeOut = 1/Math.pow(10, exponent)
                 setTimeout(exitBuild, timeOut);
                 */
-                //setTimeout(exitBuild, 1000);
-                exitBuild();
-                function exitBuild() {
+                setTimeout(exitInsertData, 1000);
+                //exitInsertData();
+                function exitInsertData() {
                     process.exit();
+                    /*
                     client.query("SELECT * FROM dailyreview_users").then(function (data) {
                         //console.log("Timeout was for " + timeOut + " milliseconds");
                         console.log("Number of user entries retrieved " + data.rows.length);
-
+                        process.exit();
+                        //client.emit('end');
                     }).catch(err);
+                    */
                     //process.exit();
                 }
                 /*
@@ -203,6 +215,9 @@ function setupDatabase() {
                 }).catch(err);
                 */
                 //process.exit();
+            } else {
+                console.log("This was user number " + i);
+                console.log("This was user : " + userList[i]['name']);
             }
         }
 
