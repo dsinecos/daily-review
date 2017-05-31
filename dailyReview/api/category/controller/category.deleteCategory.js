@@ -29,6 +29,11 @@ module.exports = function (req, res) {
             if (categoryNameExists) {
                 deleteCategory();
             } else {
+                // Create a general function to which you can pass the response as well as the error
+                // error.kind = database operation error/ input invalid
+                // error.responseMessage = to be sent to the user
+                // error.logMessage = to be logged for monitoring
+                // error.error = error reported by system
                 res.send("Category name not found");
                 res.end();
                 console.log("Category name not found");
