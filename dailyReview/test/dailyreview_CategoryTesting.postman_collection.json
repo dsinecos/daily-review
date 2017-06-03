@@ -330,6 +330,190 @@
 			"response": []
 		},
 		{
+			"name": "Test -  categoryName field empty ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Body is correct\"] = responseBody === \"Data validation errors\";",
+							"tests[\"Status code is 200\"] = responseCode.code === 400;",
+							"console.log(responseBody);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/addCategory",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName",
+							"value": "",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryLabel",
+							"value": "Health",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test - categoryLabel field empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Body is correct\"] = responseBody === \"Category added successfully\";",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"console.log(responseBody);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/addCategory",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName",
+							"value": "addingCategoryWithoutLabel",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryLabel",
+							"value": "",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test - duplicate categoryName addition",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Body is correct\"] = responseBody === \"Internal server error\";",
+							"tests[\"Status code is 200\"] = responseCode.code === 500;",
+							"console.log(responseBody);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/addCategory",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName",
+							"value": "Puzzles",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryLabel",
+							"value": "Mind",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test - categoryName greater than 30 characters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Body is correct\"] = responseBody === \"Data validation errors\";",
+							"tests[\"Status code is 200\"] = responseCode.code === 400;",
+							"console.log(responseBody);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "localhost:2346/addCategory",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "categoryName",
+							"value": "PuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzlesPuzzles",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "categoryLabel",
+							"value": "Mind",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "Use this to Test /getCategory for the currently logged in user",
 			"event": [
 				{

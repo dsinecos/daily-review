@@ -14,6 +14,7 @@ module.exports = function(app) {
     
 
     // Category routes
+
     app.post('/addCategory', app.checkAuthentication, categoryDataValidation, require('./category/controller/category.addCategory.js'));    
     app.get('/getCategory', app.checkAuthentication, require('./category/controller/category.getCategory.js'));
     app.post('/editCategory', app.checkAuthentication, require('./category/controller/category.editCategory.js'));
@@ -21,11 +22,13 @@ module.exports = function(app) {
 
     
     // Review routes
+
     app.post('/reviewDay', app.checkAuthentication, require('./review/controller/review.reviewDay.js'));
     app.get('/getReview', app.checkAuthentication, require('./review/controller/review.getReview.js'));
 
     
     // Journal routes
+    
     app.post('/addJournalQuestion', app.checkAuthentication, require('./journal/controller/journal.addJournalQuestion.js'));
     app.post('/addJournalReview', app.checkAuthentication, require('./journal/controller/journal.addJournalReview.js'));
     app.get('/getJournalReview', app.checkAuthentication, require('./journal/controller/journal.getJournalReview.js'));
