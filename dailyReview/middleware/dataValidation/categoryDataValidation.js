@@ -19,10 +19,13 @@ module.exports = function categoryDataValidation(req, res, next) {
 
     validationResult.then(function(result) {
         res.locals.categoryDataValidation = true;
+        //console.log("Inside then and not catch");
         next();
     }).catch(function (err) {
         res.locals.categoryDataValidation = false;        
         res.locals.categoryDataValidationError = err;
+        //console.log("This is the error ");
+        //console.log(err);
         next();        
         
         /*

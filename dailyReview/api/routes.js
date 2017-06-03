@@ -18,7 +18,7 @@ module.exports = function(app) {
     app.post('/addCategory', app.checkAuthentication, categoryDataValidation, require('./category/controller/category.addCategory.js'));    
     app.get('/getCategory', app.checkAuthentication, require('./category/controller/category.getCategory.js'));
     app.post('/editCategory', app.checkAuthentication, require('./category/controller/category.editCategory.js'));
-    app.post('/deleteCategory', app.checkAuthentication, require('./category/controller/category.deleteCategory.js'));
+    app.post('/deleteCategory', app.checkAuthentication, categoryDataValidation, require('./category/controller/category.deleteCategory.js'));
 
     
     // Review routes

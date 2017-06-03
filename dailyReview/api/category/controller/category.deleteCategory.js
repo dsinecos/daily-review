@@ -1,26 +1,67 @@
 var dailyReviewClient = require('../../../db.js');
 
-module.exports = function (req, res) {
+module.exports = function (req, res, next) {
 
     // Refactored Code
     // Name of fields is categoryName
 
-    categoryNameExists();
+    if (res.locals.categoryDataValidation === true) {
 
-    function categoryNameExists() {
+        checkIfCategoryNameExists();
+        
+    } else {
+
+        //console.log("Inside /deleteCategory");
+        //console.log(res.locals.categoryDataValidationError);
+
+        var error = new Error();
+        error = {
+            status: 400,
+            response: {
+                message: "Data validation errors",
+            },
+            type: "Input based",
+            message: {
+                location: "Inside /deleteCategory",
+                attempted: "To delete category from database",
+            },
+            err: res.locals.categoryDataValidationError
+        }
+        next(error);
+    }    
+
+    function checkIfCategoryNameExists() {
 
         var sqlQuery = `SELECT
                         EXISTS 
                         (SELECT true FROM dailyreview_category WHERE category_name=$1 AND user_id=$2)`;
 
-        dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(checkIfCategoryNameExists).catch(function (err) {
+        dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(ifCategoryNameExists).catch(function (err) {
+
+            var error = new Error();
+            error = {
+                status: 500,
+                response: {
+                    message: "Internal server error",
+                },
+                type: "Server based",
+                message: {
+                    location: "Inside /deleteCategory",
+                    attempted: "To delete category from database",
+                },
+                err: err
+            }
+            next(error);
+
+            /*
             res.status(500).send("Internal server error");
             res.end();
             console.log("Error occurred ");
             console.log(err);
+            */
         });
 
-        function checkIfCategoryNameExists(data) {
+        function ifCategoryNameExists(data) {
 
             var categoryNameExists = data[0]['exists'];
 
@@ -34,9 +75,26 @@ module.exports = function (req, res) {
                 // error.responseMessage = to be sent to the user
                 // error.logMessage = to be logged for monitoring
                 // error.error = error reported by system
+                /*
                 res.send("Category name not found");
                 res.end();
                 console.log("Category name not found");
+                */
+
+                var error = new Error();
+                error = {
+                    status: 400,
+                    response: {
+                        message: "Category name not found",
+                    },
+                    type: "Input based",
+                    message: {
+                        location: "Inside /deleteCategory",
+                        attempted: "To delete category from database",
+                    },
+                    err: {}
+                }
+                next(error);
             }
 
         }
@@ -52,8 +110,24 @@ module.exports = function (req, res) {
                     AND userdate_id=(SELECT userdate_id FROM dailyreview_userdate WHERE user_id=$2)`;
 
         dailyReviewClient.query(sqlQuery, [req.body.categoryName, req.user.user_id]).then(deleteScoreForDeletedCategory()).catch(function (err) {
-            console.log("Scores not deleted from dailyreview_score table. Following is the error");
-            console.log(err);
+            
+            //console.log("Scores not deleted from dailyreview_score table. Following is the error");
+            //console.log(err);
+
+            var error = new Error();
+            error = {
+                status: 500,
+                response: {
+                    message: "Internal server error",
+                },
+                type: "Server based",
+                message: {
+                    location: "Inside /deleteCategory",
+                    attempted: "To delete category from database",
+                },
+                err: err
+            }
+            next(error);
         });
 
     }
@@ -68,10 +142,27 @@ module.exports = function (req, res) {
             res.send("Category deleted successfully");
             res.end();
         }).catch(function (err) {
+            /*
             res.send("Category not deleted. Error !");
             res.end();
             console.log("Category not deleted from dailyreview_category table. Following is the error");
             console.log(err);
+            */
+
+            var error = new Error();
+            error = {
+                status: 500,
+                response: {
+                    message: "Internal server error. Category not deleted.",
+                },
+                type: "Server based",
+                message: {
+                    location: "Inside /deleteCategory",
+                    attempted: "To delete category from database",
+                },
+                err: err
+            }
+            next(error);
         });
 
     }
