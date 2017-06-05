@@ -5,7 +5,8 @@ module.exports = function (req, res, next) {
         //res.end();
         next();
     } else {
-        res.send("You aren't logged in, you need to log in first");
+        //console.log(req.path);
+        res.write("You aren't logged in, you need to log in first");
         //res.send(JSON.stringify(req.user, null, "  "));
         res.end();
     }
