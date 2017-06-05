@@ -7,6 +7,7 @@ module.exports = function(app) {
     // Authentication routes
     
     app.post('/', userCredentialValidation, passport.authenticate('local', { failureRedirect: '/failed' }), require('./user/controller/user.login.js'));
+    app.post('/login', userCredentialValidation, passport.authenticate('local', { failureRedirect: '/failed' }), require('./user/controller/user.login.js'));
     app.get('/failed', require('./user/controller/user.loginFailed.js'));
     app.get('/successLogin', app.checkAuthentication, require('./user/controller/user.successLogin.js'));
     app.get('/', app.checkAuthentication, require('./user/controller/user.successiveRequest.js'));
